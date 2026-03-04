@@ -1,11 +1,7 @@
 
----
 
-```markdown
 # 🌐 CAREVISTA 🏥  
 ### *Smart Healthcare Appointment & Management System (MERN Stack)*
-
----
 
 ## 🚀 About the Project  
 CareVista is a **next-gen healthcare web application** that connects **patients, doctors, and administrators** in a seamless digital platform.  
@@ -14,7 +10,7 @@ CareVista is a **next-gen healthcare web application** that connects **patients,
 
 It was developed during my internship as a **real-world simulation of healthcare workflows**, built with the MERN (MongoDB, Express.js, React, Node.js) stack.
 
----
+
 
 ## ✨ Key Features
 ✅ **Patients** → Book and track appointments, view history  
@@ -24,7 +20,7 @@ It was developed during my internship as a **real-world simulation of healthcare
 ✅ **Clean UI** → Easy navigation for all users  
 ✅ **Scalable Backend** → Ready for cloud deployment  
 
----
+
 
 ## 🛠️ Tech Stack  
 - ⚛️ **Frontend:** React.js, JSX, CSS  
@@ -33,10 +29,10 @@ It was developed during my internship as a **real-world simulation of healthcare
 - 🔐 **Authentication:** JWT (JSON Web Token)  
 - ☁️ **Deployment (Planned):** Vercel/Netlify (Frontend), Render/Heroku (Backend), MongoDB Atlas (DB)  
 
----
+
 
 ## 📂 Project Structure  
-```
+
 
 CareVista
 │
@@ -57,9 +53,9 @@ CareVista
 │
 └── README.md
 
-````
 
----
+
+
 
 ## ⚡ Getting Started  
 
