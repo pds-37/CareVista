@@ -16,8 +16,22 @@ if (!frontendUrl) {
   throw new Error('FRONTEND_URL is required to configure CORS.');
 }
 
+const normalizedFrontendUrl = frontendUrl.replace(/\/+$/, '');
+
 const corsOptions = {
-  origin: frontendUrl,
+  origin(origin, callback) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const normalizedOrigin = origin.replace(/\/+$/, '');
+
+    if (normalizedOrigin === normalizedFrontendUrl) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 };
 
