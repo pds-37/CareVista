@@ -1,6 +1,194 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
+
+const FALLBACK_NOTICE =
+  'Live updates are temporarily unavailable. Showing CareVista overview information.';
+
+const fallbackOverview = {
+  hero: {
+    headline: 'World-Class Care, Closer to Home',
+    subheadline:
+      'CareVista brings together expert physicians, advanced diagnostics, and compassionate nursing under one roof so every patient feels seen, heard, and healed.',
+    ctaText: 'Book an Appointment',
+    ctaLink: '/appointments',
+  },
+  stats: [
+    { label: 'Years of Service', value: '25+' },
+    { label: 'Expert Physicians', value: '120+' },
+    { label: 'Patients Treated', value: '50,000+' },
+    { label: 'Departments', value: '6' },
+  ],
+  departments: [
+    {
+      id: 'fallback-dept-cardiology',
+      name: 'Cardiology',
+      icon: 'CV',
+      shortDescription:
+        'Comprehensive heart and vascular care with preventive and acute services.',
+    },
+    {
+      id: 'fallback-dept-neurology',
+      name: 'Neurology',
+      icon: 'NE',
+      shortDescription:
+        'Specialist care for the brain, spine, nerves, and stroke recovery.',
+    },
+    {
+      id: 'fallback-dept-orthopedics',
+      name: 'Orthopedics',
+      icon: 'OR',
+      shortDescription:
+        'Bone, joint, and mobility care for injuries and chronic pain.',
+    },
+    {
+      id: 'fallback-dept-pediatrics',
+      name: 'Pediatrics',
+      icon: 'PD',
+      shortDescription:
+        'Compassionate pediatric care from infancy through adolescence.',
+    },
+    {
+      id: 'fallback-dept-oncology',
+      name: 'Oncology',
+      icon: 'ON',
+      shortDescription:
+        'Integrated cancer diagnosis, treatment planning, and support services.',
+    },
+    {
+      id: 'fallback-dept-emergency',
+      name: 'Emergency Medicine',
+      icon: 'ER',
+      shortDescription:
+        '24/7 emergency evaluation, stabilization, and urgent care routing.',
+    },
+  ],
+  featuredDoctors: [
+    {
+      id: 'fallback-doc-sarah-mitchell',
+      name: 'Dr. Sarah Mitchell',
+      specialty: 'Interventional Cardiology',
+      department: 'Cardiology',
+      imageUrl: '',
+      bio: 'Dr. Mitchell leads the Cardiology service with a strong focus on prevention, early intervention, and recovery planning for patients living with complex cardiovascular conditions.',
+      rating: 4.9,
+      reviewCount: 214,
+    },
+    {
+      id: 'fallback-doc-james-okafor',
+      name: 'Dr. James Okafor',
+      specialty: 'Clinical Neurology',
+      department: 'Neurology',
+      imageUrl: '',
+      bio: 'Dr. Okafor is known for clear neurological evaluations, thoughtful diagnostic planning, and careful communication with patients managing chronic neurological symptoms.',
+      rating: 4.8,
+      reviewCount: 186,
+    },
+    {
+      id: 'fallback-doc-priya-sharma',
+      name: 'Dr. Priya Sharma',
+      specialty: 'Orthopedic Surgery',
+      department: 'Orthopedics',
+      imageUrl: '',
+      bio: 'Dr. Sharma combines surgical precision with rehabilitation-first planning, helping patients recover strength, confidence, and long-term mobility after injury or chronic pain.',
+      rating: 4.9,
+      reviewCount: 201,
+    },
+    {
+      id: 'fallback-doc-carlos-reyes',
+      name: 'Dr. Carlos Reyes',
+      specialty: 'General Pediatrics',
+      department: 'Pediatrics',
+      imageUrl: '',
+      bio: 'Dr. Reyes provides calm, family-centered pediatric care with particular strength in preventive visits, developmental milestones, and acute same-day child consultations.',
+      rating: 4.8,
+      reviewCount: 233,
+    },
+    {
+      id: 'fallback-doc-emily-chen',
+      name: 'Dr. Emily Chen',
+      specialty: 'Medical Oncology',
+      department: 'Oncology',
+      imageUrl: '',
+      bio: 'Dr. Chen leads the Oncology department with an emphasis on multidisciplinary planning, compassionate patient education, and continuity through treatment and survivorship.',
+      rating: 5,
+      reviewCount: 167,
+    },
+    {
+      id: 'fallback-doc-marcus-webb',
+      name: 'Dr. Marcus Webb',
+      specialty: 'Emergency Medicine',
+      department: 'Emergency Medicine',
+      imageUrl: '',
+      bio: 'Dr. Webb oversees rapid triage and emergency stabilization with a disciplined, team-based approach that keeps urgent patients moving quickly toward the right level of care.',
+      rating: 4.7,
+      reviewCount: 145,
+    },
+  ],
+  testimonials: [
+    {
+      name: 'Ava Richardson',
+      role: 'Patient',
+      quote:
+        'From the moment I walked in, the staff treated me with patience and respect. My cardiology follow-up felt organized, calm, and far less stressful than I expected.',
+    },
+    {
+      name: 'Michael Torres',
+      role: 'Caregiver',
+      quote:
+        'CareVista helped our family navigate oncology appointments with real clarity. We always knew who to call, what came next, and how to prepare.',
+    },
+    {
+      name: 'Nina Patel',
+      role: 'Patient',
+      quote:
+        'The orthopedic team took my pain seriously and built a recovery plan that fit my daily routine. I felt supported, not rushed, throughout the process.',
+    },
+    {
+      name: 'Daniel Brooks',
+      role: 'Caregiver',
+      quote:
+        'Our pediatric visit was thoughtful from start to finish. The doctor spoke directly to our child in a reassuring way and made the whole family feel at ease.',
+    },
+  ],
+  faq: [
+    {
+      question: 'How do I request an appointment at CareVista?',
+      answer:
+        'You can submit an appointment request online through the Book Appointment page. Our care team reviews requests promptly and contacts you to confirm the best available slot.',
+    },
+    {
+      question: 'Can I choose a specific doctor when booking?',
+      answer:
+        'Yes. You can select a department first and then choose an available physician in that specialty. If your preferred doctor is unavailable, the care desk will suggest the closest alternative.',
+    },
+    {
+      question: 'Do you accept same-day visits?',
+      answer:
+        'Same-day appointments may be available depending on the department and urgency of the concern. Emergency cases should go directly to Emergency Medicine or call ahead if possible.',
+    },
+    {
+      question: 'What should I bring to my first visit?',
+      answer:
+        'Please bring a photo ID, insurance information if applicable, a current medication list, and any prior reports or imaging relevant to your concern.',
+    },
+    {
+      question: 'How does the care-desk dashboard work?',
+      answer:
+        'The care-desk view is an internal operational screen that allows staff to review incoming appointments and contact messages, track status changes, and keep response times organized.',
+    },
+    {
+      question: 'Will someone respond to my contact form message?',
+      answer:
+        'Yes. Contact requests are sent directly to the care desk. For urgent medical concerns, call the hospital directly rather than waiting for an online reply.',
+    },
+  ],
+  aboutSnippet: {
+    title: 'Our Mission',
+    body:
+      'CareVista was founded on the belief that exceptional healthcare is a right, not a privilege. We combine clinical excellence, operational clarity, and genuine compassion so patients and families can move through care with confidence.',
+  },
+};
 
 const getInitials = (name) =>
   name
@@ -10,9 +198,37 @@ const getInitials = (name) =>
     .slice(0, 2)
     .toUpperCase();
 
+const mergeOverviewWithFallback = (data = {}) => ({
+  hero: {
+    ...fallbackOverview.hero,
+    ...(data.hero || {}),
+  },
+  stats:
+    Array.isArray(data.stats) && data.stats.length > 0
+      ? data.stats
+      : fallbackOverview.stats,
+  departments:
+    Array.isArray(data.departments) && data.departments.length > 0
+      ? data.departments
+      : fallbackOverview.departments,
+  featuredDoctors:
+    Array.isArray(data.featuredDoctors) && data.featuredDoctors.length > 0
+      ? data.featuredDoctors
+      : fallbackOverview.featuredDoctors,
+  testimonials:
+    Array.isArray(data.testimonials) && data.testimonials.length > 0
+      ? data.testimonials
+      : fallbackOverview.testimonials,
+  faq:
+    Array.isArray(data.faq) && data.faq.length > 0 ? data.faq : fallbackOverview.faq,
+  aboutSnippet: {
+    ...fallbackOverview.aboutSnippet,
+    ...(data.aboutSnippet || {}),
+  },
+});
+
 function Home() {
-  const [overview, setOverview] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [overview, setOverview] = useState(() => mergeOverviewWithFallback());
   const [error, setError] = useState('');
   const [openFaq, setOpenFaq] = useState(0);
 
@@ -21,23 +237,16 @@ function Home() {
 
     const loadOverview = async () => {
       try {
-        setLoading(true);
         setError('');
         const { data } = await api.get('/site/overview');
 
         if (mounted) {
-          setOverview(data);
+          setOverview(mergeOverviewWithFallback(data));
         }
       } catch (err) {
         if (mounted) {
-          setError(
-            err.response?.data?.error ||
-              'Unable to load CareVista right now. Please try again shortly.'
-          );
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
+          setError(FALLBACK_NOTICE);
+          setOverview(mergeOverviewWithFallback());
         }
       }
     };
@@ -49,29 +258,6 @@ function Home() {
     };
   }, []);
 
-  const featuredDoctors = useMemo(
-    () => overview?.featuredDoctors || [],
-    [overview]
-  );
-
-  if (loading) {
-    return (
-      <section className="section section-centered">
-        <div className="loading-spinner" aria-label="Loading homepage content" />
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className="section">
-        <div className="container">
-          <div className="alert-error">{error}</div>
-        </div>
-      </section>
-    );
-  }
-
   return (
     <>
       <section className="home-hero">
@@ -80,8 +266,16 @@ function Home() {
             <span className="eyebrow">Trusted Multispecialty Care</span>
             <h1>{overview.hero.headline}</h1>
             <p>{overview.hero.subheadline}</p>
+            {error ? (
+              <div className="home-status-badge" role="status" aria-live="polite">
+                {error}
+              </div>
+            ) : null}
             <div className="hero-actions">
-              <Link to="/appointments" className="btn btn-primary">
+              <Link
+                to={overview.hero.ctaLink || '/appointments'}
+                className="btn btn-primary"
+              >
                 {overview.hero.ctaText}
               </Link>
               <Link to="/departments" className="btn btn-outline btn-light">
@@ -159,7 +353,7 @@ function Home() {
             </p>
           </div>
           <div className="grid-3">
-            {featuredDoctors.map((doctor) => (
+            {overview.featuredDoctors.map((doctor) => (
               <article className="card doctor-card" key={doctor.id}>
                 <div className="doctor-card-header">
                   {doctor.imageUrl ? (
@@ -180,7 +374,7 @@ function Home() {
                 <p className="doctor-bio line-clamp-2">{doctor.bio}</p>
                 <div className="doctor-rating-row">
                   <span aria-label={`Rated ${doctor.rating || 4.8} out of 5`}>
-                    ⭐ {doctor.rating || 4.8}
+                    Rating {doctor.rating || 4.8}
                   </span>
                   <span>{doctor.reviewCount || 100}+ reviews</span>
                 </div>
