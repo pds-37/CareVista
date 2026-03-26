@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
+import { fallbackDepartments, fallbackDoctors } from '../content/careFallback';
 
 const getInitials = (name) =>
   name
@@ -11,99 +12,77 @@ const getInitials = (name) =>
     .toUpperCase();
 
 function FindDoctors() {
-  const [departments, setDepartments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [departments, setDepartments] = useState(fallbackDepartments);
+  const [doctors, setDoctors] = useState(fallbackDoctors);
   const [error, setError] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
 
   useEffect(() => {
     let mounted = true;
 
-    const loadDepartments = async () => {
+    const loadDirectory = async () => {
       try {
-        const { data } = await api.get('/site/departments');
-        if (mounted) {
-          setDepartments(data.departments || []);
+        setError('');
+        const [departmentResponse, doctorResponse] = await Promise.all([
+          api.get('/site/departments'),
+          api.get('/site/doctors'),
+        ]);
+
+        if (
+          mounted &&
+          Array.isArray(departmentResponse.data.departments) &&
+          departmentResponse.data.departments.length > 0
+        ) {
+          setDepartments(departmentResponse.data.departments);
+        }
+
+        if (
+          mounted &&
+          Array.isArray(doctorResponse.data.doctors) &&
+          doctorResponse.data.doctors.length > 0
+        ) {
+          setDoctors(doctorResponse.data.doctors);
         }
       } catch (err) {
         if (mounted) {
           setError(
             err.response?.data?.error ||
-              'Unable to load department filters right now.'
+              'Live physician data is temporarily unavailable. Showing the CareVista directory.'
           );
         }
       }
     };
 
-    loadDepartments();
+    loadDirectory();
 
     return () => {
       mounted = false;
     };
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery.trim());
-    }, 400);
+  const filteredDoctors = useMemo(() => {
+    const normalizedSearch = searchQuery.trim().toLowerCase();
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+    return doctors.filter((doctor) => {
+      const matchesDepartment = selectedDepartment
+        ? doctor.department === selectedDepartment
+        : true;
+      const matchesSearch = normalizedSearch
+        ? `${doctor.name} ${doctor.specialty}`.toLowerCase().includes(normalizedSearch)
+        : true;
 
-  useEffect(() => {
-    let mounted = true;
+      return matchesDepartment && matchesSearch;
+    });
+  }, [doctors, searchQuery, selectedDepartment]);
 
-    const loadDoctors = async () => {
-      try {
-        setLoading(true);
-        setError('');
-
-        const params = {};
-
-        if (selectedDepartment) {
-          params.department = selectedDepartment;
-        }
-
-        if (debouncedSearch) {
-          params.search = debouncedSearch;
-        }
-
-        const { data } = await api.get('/site/doctors', { params });
-
-        if (mounted) {
-          setDoctors(data.doctors || []);
-        }
-      } catch (err) {
-        if (mounted) {
-          setError(
-            err.response?.data?.error ||
-              'Unable to load physicians right now.'
-          );
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadDoctors();
-
-    return () => {
-      mounted = false;
-    };
-  }, [debouncedSearch, selectedDepartment]);
-
-  const resultsLabel = useMemo(() => {
-    if (loading) {
-      return 'Loading doctors...';
-    }
-
-    return `Showing ${doctors.length} doctor${doctors.length === 1 ? '' : 's'}`;
-  }, [doctors.length, loading]);
+  const resultsLabel = useMemo(
+    () =>
+      `Showing ${filteredDoctors.length} doctor${
+        filteredDoctors.length === 1 ? '' : 's'
+      }`,
+    [filteredDoctors.length]
+  );
 
   return (
     <>
@@ -159,23 +138,19 @@ function FindDoctors() {
             <p>{resultsLabel}</p>
           </div>
 
-          {error ? (
-            <div className="alert-error">{error}</div>
-          ) : loading ? (
-            <div className="section-centered">
-              <div className="loading-spinner" aria-label="Loading doctors" />
-            </div>
-          ) : doctors.length === 0 ? (
+          {error ? <div className="alert-error">{error}</div> : null}
+
+          {filteredDoctors.length === 0 ? (
             <div className="empty-state card">
               <span className="empty-state-icon" aria-hidden="true">
-                🔎
+                DR
               </span>
               <h2>No doctors found matching your search.</h2>
               <p>Try removing a filter or using a broader specialty keyword.</p>
             </div>
           ) : (
             <div className="grid-3">
-              {doctors.map((doctor) => (
+              {filteredDoctors.map((doctor) => (
                 <article className="card doctor-directory-card" key={doctor._id}>
                   <div className="doctor-avatar large-avatar">
                     {getInitials(doctor.name)}
@@ -185,11 +160,11 @@ function FindDoctors() {
                   <span className="department-pill">{doctor.department}</span>
                   <div className="doctor-meta-list">
                     <p>
-                      <strong>⭐ {doctor.rating}</strong> ({doctor.reviewCount}{' '}
+                      <strong>Rating {doctor.rating}</strong> ({doctor.reviewCount}{' '}
                       reviews)
                     </p>
                     <p>{doctor.experience} years experience</p>
-                    <p>Languages: {doctor.languages.join(', ')}</p>
+                    <p>Languages: {(doctor.languages || []).join(', ')}</p>
                   </div>
                   <p className="line-clamp-3">{doctor.bio}</p>
                   <Link to="/appointments" className="btn btn-primary full-width">

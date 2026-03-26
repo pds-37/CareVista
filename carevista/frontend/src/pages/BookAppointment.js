@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api';
+import { useAuth } from '../auth/AuthContext';
+import { fallbackDepartments, fallbackDoctors } from '../content/careFallback';
 
 const initialFormState = {
-  patientName: '',
-  patientEmail: '',
   patientPhone: '',
   department: '',
   doctor: '',
@@ -12,44 +13,61 @@ const initialFormState = {
   reason: '',
 };
 
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 function BookAppointment() {
+  const { isAuthenticated, user } = useAuth();
   const [formData, setFormData] = useState(initialFormState);
-  const [departments, setDepartments] = useState([]);
-  const [doctors, setDoctors] = useState([]);
+  const [departments, setDepartments] = useState(fallbackDepartments);
+  const [doctors, setDoctors] = useState(fallbackDoctors);
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(null);
   const [error, setError] = useState('');
-  const [pageLoading, setPageLoading] = useState(true);
+  const [optionsNotice, setOptionsNotice] = useState('');
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    setFormData((current) => ({
+      ...current,
+      patientPhone: user.phone || current.patientPhone,
+    }));
+  }, [user]);
 
   useEffect(() => {
     let mounted = true;
 
     const loadOptions = async () => {
       try {
-        setPageLoading(true);
+        setOptionsNotice('');
         const [departmentResponse, doctorResponse] = await Promise.all([
           api.get('/site/departments'),
           api.get('/site/doctors'),
         ]);
 
-        if (mounted) {
-          setDepartments(departmentResponse.data.departments || []);
-          setDoctors(doctorResponse.data.doctors || []);
+        if (
+          mounted &&
+          Array.isArray(departmentResponse.data.departments) &&
+          departmentResponse.data.departments.length > 0
+        ) {
+          setDepartments(departmentResponse.data.departments);
+        }
+
+        if (
+          mounted &&
+          Array.isArray(doctorResponse.data.doctors) &&
+          doctorResponse.data.doctors.length > 0
+        ) {
+          setDoctors(doctorResponse.data.doctors);
         }
       } catch (err) {
         if (mounted) {
-          setError(
+          setOptionsNotice(
             err.response?.data?.error ||
-              'Unable to load appointment options right now.'
+              'Live appointment options are temporarily unavailable. Showing static department and doctor details.'
           );
-        }
-      } finally {
-        if (mounted) {
-          setPageLoading(false);
         }
       }
     };
@@ -85,16 +103,6 @@ function BookAppointment() {
 
   const validate = () => {
     const nextErrors = {};
-
-    if (!formData.patientName.trim()) {
-      nextErrors.patientName = 'Please enter your full name.';
-    }
-
-    if (!formData.patientEmail.trim()) {
-      nextErrors.patientEmail = 'Please enter your email address.';
-    } else if (!emailPattern.test(formData.patientEmail.trim())) {
-      nextErrors.patientEmail = 'Please enter a valid email address.';
-    }
 
     if (!formData.patientPhone.trim()) {
       nextErrors.patientPhone = 'Please enter your phone number.';
@@ -154,8 +162,6 @@ function BookAppointment() {
 
       const { data } = await api.post('/site/appointments', {
         ...formData,
-        patientName: formData.patientName.trim(),
-        patientEmail: formData.patientEmail.trim(),
         patientPhone: formData.patientPhone.trim(),
         reason: formData.reason.trim(),
       });
@@ -172,7 +178,10 @@ function BookAppointment() {
   };
 
   const resetForm = () => {
-    setFormData(initialFormState);
+    setFormData({
+      ...initialFormState,
+      patientPhone: user?.phone || '',
+    });
     setErrors({});
     setError('');
     setSubmitted(null);
@@ -188,8 +197,8 @@ function BookAppointment() {
             </div>
             <h1>Appointment Requested!</h1>
             <p>
-              Your request has been sent to the CareVista scheduling team. A care
-              coordinator will review the details and follow up shortly.
+              Your request has been sent to the CareVista scheduling team. You
+              can monitor the status from your patient portal.
             </p>
             <div className="success-summary">
               <div>
@@ -211,12 +220,57 @@ function BookAppointment() {
                 </strong>
               </div>
             </div>
-            <button type="button" className="btn btn-primary" onClick={resetForm}>
-              Book Another
-            </button>
+            <div className="hero-actions">
+              <button type="button" className="btn btn-primary" onClick={resetForm}>
+                Book Another
+              </button>
+              <Link to="/portal/patient" className="btn btn-secondary">
+                Open Patient Portal
+              </Link>
+            </div>
           </div>
         </div>
       </section>
+    );
+  }
+
+  if (!isAuthenticated || user?.role !== 'patient') {
+    return (
+      <>
+        <section className="page-hero">
+          <div className="container">
+            <span className="eyebrow eyebrow-light">Appointment Center</span>
+            <h1>Book an Appointment</h1>
+            <p>
+              Patient booking is now tied to a secure CareVista account so you
+              can track requests and appointment history afterward.
+            </p>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container">
+            <div className="card empty-state">
+              <span className="empty-state-icon" aria-hidden="true">
+                AC
+              </span>
+              <h2>Sign in as a patient to continue.</h2>
+              <p>
+                Your patient account stores appointment history, request status,
+                and future booking details securely.
+              </p>
+              <div className="hero-actions">
+                <Link to="/login" className="btn btn-primary">
+                  Sign In
+                </Link>
+                <Link to="/register" className="btn btn-secondary">
+                  Create Account
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </>
     );
   }
 
@@ -227,8 +281,8 @@ function BookAppointment() {
           <span className="eyebrow eyebrow-light">Appointment Center</span>
           <h1>Book an Appointment</h1>
           <p>
-            Share your symptoms, preferred doctor, and visit window. Our team
-            will confirm the best available slot.
+            Submit your preferred department, doctor, and visit window. Your
+            request will appear in your patient portal after submission.
           </p>
         </div>
       </section>
@@ -239,201 +293,180 @@ function BookAppointment() {
             <div className="card appointment-form-card">
               <h2>Request Your Visit</h2>
               <p className="form-intro">
-                All fields are required so the scheduling team can triage your
-                request accurately.
+                Your CareVista account is linked to this booking automatically.
               </p>
 
-              {pageLoading ? (
-                <div className="section-centered">
-                  <div
-                    className="loading-spinner"
-                    aria-label="Loading appointment form"
-                  />
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} noValidate>
-                  {error && <div className="alert-error">{error}</div>}
+              <form onSubmit={handleSubmit} noValidate>
+                {optionsNotice ? <div className="alert-error">{optionsNotice}</div> : null}
+                {error ? <div className="alert-error">{error}</div> : null}
 
+                <div className="grid-2">
                   <div className="form-group">
-                    <label className="form-label" htmlFor="patientName">
-                      Patient Full Name
+                    <label className="form-label" htmlFor="patient-account-name">
+                      Patient Name
                     </label>
                     <input
-                      id="patientName"
-                      name="patientName"
+                      id="patient-account-name"
                       type="text"
                       className="form-input"
-                      value={formData.patientName}
-                      onChange={handleChange}
+                      value={user.name}
+                      disabled
                     />
-                    {errors.patientName && (
-                      <p className="field-error">{errors.patientName}</p>
-                    )}
-                  </div>
-
-                  <div className="grid-2">
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="patientEmail">
-                        Email Address
-                      </label>
-                      <input
-                        id="patientEmail"
-                        name="patientEmail"
-                        type="email"
-                        className="form-input"
-                        value={formData.patientEmail}
-                        onChange={handleChange}
-                      />
-                      {errors.patientEmail && (
-                        <p className="field-error">{errors.patientEmail}</p>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="patientPhone">
-                        Phone Number
-                      </label>
-                      <input
-                        id="patientPhone"
-                        name="patientPhone"
-                        type="tel"
-                        className="form-input"
-                        value={formData.patientPhone}
-                        onChange={handleChange}
-                      />
-                      {errors.patientPhone && (
-                        <p className="field-error">{errors.patientPhone}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grid-2">
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="department">
-                        Department
-                      </label>
-                      <select
-                        id="department"
-                        name="department"
-                        className="form-select"
-                        value={formData.department}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select a department</option>
-                        {departments.map((department) => (
-                          <option key={department._id} value={department.name}>
-                            {department.name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.department && (
-                        <p className="field-error">{errors.department}</p>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="doctor">
-                        Preferred Doctor
-                      </label>
-                      <select
-                        id="doctor"
-                        name="doctor"
-                        className="form-select"
-                        value={formData.doctor}
-                        onChange={handleChange}
-                        disabled={!formData.department}
-                      >
-                        <option value="">
-                          {formData.department
-                            ? 'Select a doctor'
-                            : 'Choose a department first'}
-                        </option>
-                        {filteredDoctors.map((doctor) => (
-                          <option key={doctor._id} value={doctor.name}>
-                            {doctor.name}
-                          </option>
-                        ))}
-                      </select>
-                      {errors.doctor && (
-                        <p className="field-error">{errors.doctor}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grid-2">
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="preferredDate">
-                        Preferred Date
-                      </label>
-                      <input
-                        id="preferredDate"
-                        name="preferredDate"
-                        type="date"
-                        min={today}
-                        className="form-input"
-                        value={formData.preferredDate}
-                        onChange={handleChange}
-                      />
-                      {errors.preferredDate && (
-                        <p className="field-error">{errors.preferredDate}</p>
-                      )}
-                    </div>
-
-                    <div className="form-group">
-                      <label className="form-label" htmlFor="preferredTime">
-                        Preferred Time
-                      </label>
-                      <select
-                        id="preferredTime"
-                        name="preferredTime"
-                        className="form-select"
-                        value={formData.preferredTime}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select a time window</option>
-                        <option value="Morning 9-12">Morning 9-12</option>
-                        <option value="Afternoon 12-5">Afternoon 12-5</option>
-                        <option value="Evening 5-8">Evening 5-8</option>
-                      </select>
-                      {errors.preferredTime && (
-                        <p className="field-error">{errors.preferredTime}</p>
-                      )}
-                    </div>
                   </div>
 
                   <div className="form-group">
-                    <label className="form-label" htmlFor="reason">
-                      Reason for Visit
+                    <label className="form-label" htmlFor="patient-account-email">
+                      Account Email
                     </label>
-                    <textarea
-                      id="reason"
-                      name="reason"
-                      className="form-textarea"
-                      rows="5"
-                      value={formData.reason}
-                      onChange={handleChange}
+                    <input
+                      id="patient-account-email"
+                      type="email"
+                      className="form-input"
+                      value={user.email}
+                      disabled
                     />
-                    {errors.reason && (
-                      <p className="field-error">{errors.reason}</p>
-                    )}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="patientPhone">
+                    Phone Number
+                  </label>
+                  <input
+                    id="patientPhone"
+                    name="patientPhone"
+                    type="tel"
+                    className="form-input"
+                    value={formData.patientPhone}
+                    onChange={handleChange}
+                  />
+                  {errors.patientPhone ? (
+                    <p className="field-error">{errors.patientPhone}</p>
+                  ) : null}
+                </div>
+
+                <div className="grid-2">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="department">
+                      Department
+                    </label>
+                    <select
+                      id="department"
+                      name="department"
+                      className="form-select"
+                      value={formData.department}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select a department</option>
+                      {departments.map((department) => (
+                        <option key={department._id} value={department.name}>
+                          {department.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.department ? (
+                      <p className="field-error">{errors.department}</p>
+                    ) : null}
                   </div>
 
-                  <button
-                    type="submit"
-                    className="btn btn-primary full-width"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span className="button-loading">
-                        <span className="button-spinner" aria-hidden="true" />
-                        Submitting Request
-                      </span>
-                    ) : (
-                      'Submit Appointment Request'
-                    )}
-                  </button>
-                </form>
-              )}
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="doctor">
+                      Preferred Doctor
+                    </label>
+                    <select
+                      id="doctor"
+                      name="doctor"
+                      className="form-select"
+                      value={formData.doctor}
+                      onChange={handleChange}
+                      disabled={!formData.department}
+                    >
+                      <option value="">
+                        {formData.department
+                          ? 'Select a doctor'
+                          : 'Choose a department first'}
+                      </option>
+                      {filteredDoctors.map((doctor) => (
+                        <option key={doctor._id} value={doctor.name}>
+                          {doctor.name}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.doctor ? <p className="field-error">{errors.doctor}</p> : null}
+                  </div>
+                </div>
+
+                <div className="grid-2">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="preferredDate">
+                      Preferred Date
+                    </label>
+                    <input
+                      id="preferredDate"
+                      name="preferredDate"
+                      type="date"
+                      min={today}
+                      className="form-input"
+                      value={formData.preferredDate}
+                      onChange={handleChange}
+                    />
+                    {errors.preferredDate ? (
+                      <p className="field-error">{errors.preferredDate}</p>
+                    ) : null}
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="preferredTime">
+                      Preferred Time
+                    </label>
+                    <select
+                      id="preferredTime"
+                      name="preferredTime"
+                      className="form-select"
+                      value={formData.preferredTime}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select a time window</option>
+                      <option value="Morning 9-12">Morning 9-12</option>
+                      <option value="Afternoon 12-5">Afternoon 12-5</option>
+                      <option value="Evening 5-8">Evening 5-8</option>
+                    </select>
+                    {errors.preferredTime ? (
+                      <p className="field-error">{errors.preferredTime}</p>
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="reason">
+                    Reason for Visit
+                  </label>
+                  <textarea
+                    id="reason"
+                    name="reason"
+                    className="form-textarea"
+                    rows="5"
+                    value={formData.reason}
+                    onChange={handleChange}
+                  />
+                  {errors.reason ? <p className="field-error">{errors.reason}</p> : null}
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary full-width"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <span className="button-loading">
+                      <span className="button-spinner" aria-hidden="true" />
+                      Submitting Request
+                    </span>
+                  ) : (
+                    'Submit Appointment Request'
+                  )}
+                </button>
+              </form>
             </div>
           </div>
 
@@ -444,19 +477,19 @@ function BookAppointment() {
               <li>
                 <strong>Submit Request</strong>
                 <p>
-                  Tell us what care you need and when you would like to be seen.
+                  Choose the department, physician, and preferred visit window.
                 </p>
               </li>
               <li>
-                <strong>Confirmation Call</strong>
+                <strong>Portal Tracking</strong>
                 <p>
-                  A scheduling specialist confirms the best doctor and time slot.
+                  Monitor status updates from your patient dashboard after submission.
                 </p>
               </li>
               <li>
                 <strong>Your Appointment</strong>
                 <p>
-                  Arrive a few minutes early and our team will guide the rest.
+                  Arrive a few minutes early and our care team will guide the rest.
                 </p>
               </li>
             </ol>

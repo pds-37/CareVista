@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -12,6 +13,13 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, logout, user } = useAuth();
+  const portalLabel =
+    user?.role === 'admin'
+      ? 'Admin Panel'
+      : user?.role === 'doctor'
+        ? 'Doctor Dashboard'
+        : 'My Portal';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -72,6 +80,25 @@ function Navbar() {
           <Link to="/appointments" className="btn btn-primary navbar-cta">
             Book Appointment
           </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/portal" className="btn btn-secondary navbar-cta">
+                {portalLabel}
+              </Link>
+              <button type="button" className="navbar-link navbar-auth-link" onClick={logout}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="navbar-link navbar-auth-link">
+                Sign In
+              </Link>
+              <Link to="/register" className="btn btn-secondary navbar-cta">
+                Join CareVista
+              </Link>
+            </>
+          )}
           <button
             type="button"
             className={`navbar-toggle ${menuOpen ? 'open' : ''}`}
@@ -103,6 +130,29 @@ function Navbar() {
           <Link to="/appointments" className="btn btn-primary navbar-mobile-cta">
             Book Appointment
           </Link>
+          {isAuthenticated ? (
+            <>
+              <Link to="/portal" className="btn btn-secondary navbar-mobile-cta">
+                {portalLabel}
+              </Link>
+              <button
+                type="button"
+                className="navbar-mobile-link"
+                onClick={logout}
+              >
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="navbar-mobile-link">
+                Sign In
+              </Link>
+              <Link to="/register" className="btn btn-secondary navbar-mobile-cta">
+                Join CareVista
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

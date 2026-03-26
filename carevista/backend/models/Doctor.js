@@ -53,6 +53,36 @@ const doctorSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    schedule: {
+      weekdays: {
+        type: [String],
+        default: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      },
+      startTime: {
+        type: String,
+        default: '09:00',
+        trim: true,
+      },
+      endTime: {
+        type: String,
+        default: '17:00',
+        trim: true,
+      },
+      slotDurationMinutes: {
+        type: Number,
+        default: 30,
+      },
+      consultationMode: {
+        type: String,
+        default: 'In-person and virtual',
+        trim: true,
+      },
+      notes: {
+        type: String,
+        default: 'Available for scheduled consultations during posted clinic hours.',
+        trim: true,
+      },
+    },
   },
   {
     timestamps: true,

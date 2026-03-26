@@ -2,6 +2,7 @@ const Appointment = require('./models/Appointment');
 const ContactMessage = require('./models/ContactMessage');
 const Department = require('./models/Department');
 const Doctor = require('./models/Doctor');
+const User = require('./models/User');
 const siteContent = require('./seed/siteContent');
 
 const escapeRegex = (value = '') => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -87,10 +88,18 @@ const createAppointment = async (req, res, next) => {
       notes,
     } = req.body;
 
+    const patientUser = req.user
+      ? await User.findById(req.user._id).lean()
+      : null;
+    const doctorRecord = await Doctor.findOne({ name: doctor }).lean();
+    const resolvedPatientName = patientUser?.name || patientName;
+    const resolvedPatientEmail = patientUser?.email || patientEmail;
+    const resolvedPatientPhone = patientUser?.phone || patientPhone;
+
     if (
-      !patientName ||
-      !patientEmail ||
-      !patientPhone ||
+      !resolvedPatientName ||
+      !resolvedPatientEmail ||
+      !resolvedPatientPhone ||
       !department ||
       !doctor ||
       !preferredDate ||
@@ -101,11 +110,13 @@ const createAppointment = async (req, res, next) => {
     }
 
     const appointment = await Appointment.create({
-      patientName,
-      patientEmail,
-      patientPhone,
+      patientUser: patientUser?._id || null,
+      patientName: resolvedPatientName,
+      patientEmail: resolvedPatientEmail,
+      patientPhone: resolvedPatientPhone,
       department,
       doctor,
+      doctorId: doctorRecord?._id || null,
       preferredDate,
       preferredTime,
       reason,
@@ -183,6 +194,11 @@ const updateAppointmentStatus = async (req, res, next) => {
     }
 
     appointment.status = status;
+
+    if (typeof req.body.notes === 'string') {
+      appointment.notes = req.body.notes.trim();
+    }
+
     await appointment.save();
 
     return res.json(appointment);
