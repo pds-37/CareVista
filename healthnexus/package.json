@@ -1,0 +1,12 @@
+{
+  "name": "healthnexus",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend start",
+    "dev:backend": "npm --prefix backend run dev",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend run start",
+    "seed": "npm --prefix backend run seed"
+  }
+}
