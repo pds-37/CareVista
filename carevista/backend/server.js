@@ -10,24 +10,20 @@ const seedDatabase = require('./seed/seedDatabase');
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
+const frontendUrl = process.env.FRONTEND_URL;
 
+if (!frontendUrl) {
+  throw new Error('FRONTEND_URL is required to configure CORS.');
+}
+
+const corsOptions = {
+  origin: frontendUrl,
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (process.env.NODE_ENV !== 'production') {
-        return callback(null, true);
-      }
-
-      if (!origin || origin === process.env.FRONTEND_URL) {
-        return callback(null, true);
-      }
-
-      return callback(new Error('Not allowed by CORS'));
-    },
-  })
-);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date() });
