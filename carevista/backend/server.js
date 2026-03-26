@@ -17,6 +17,13 @@ if (!frontendUrl) {
 }
 
 const normalizedFrontendUrl = frontendUrl.replace(/\/+$/, '');
+const frontendHostname = new URL(normalizedFrontendUrl).hostname;
+const vercelPreviewPattern = frontendHostname.endsWith('.vercel.app')
+  ? new RegExp(
+      `^${frontendHostname.replace('.vercel.app', '').replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')}(?:-[a-z0-9-]+)?\\.vercel\\.app$`,
+      'i'
+    )
+  : null;
 
 const corsOptions = {
   origin(origin, callback) {
@@ -27,6 +34,10 @@ const corsOptions = {
     const normalizedOrigin = origin.replace(/\/+$/, '');
 
     if (normalizedOrigin === normalizedFrontendUrl) {
+      return callback(null, true);
+    }
+
+    if (vercelPreviewPattern && vercelPreviewPattern.test(new URL(normalizedOrigin).hostname)) {
       return callback(null, true);
     }
 
