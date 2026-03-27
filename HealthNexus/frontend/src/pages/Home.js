@@ -70,22 +70,6 @@ function SearchIcon() {
   );
 }
 
-function ArrowIcon({ direction = 'right' }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      role="presentation"
-      aria-hidden="true"
-      style={{ transform: direction === 'left' ? 'scaleX(-1)' : 'none' }}
-    >
-      <path
-        d="M8.59 5.59L10 4.17L17.83 12L10 19.83L8.59 18.41L15 12L8.59 5.59Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
 function ShortcutIcon({ type }) {
   if (type === 'doctor') {
     return (
@@ -118,8 +102,6 @@ function ShortcutIcon({ type }) {
     </svg>
   );
 }
-
-const getDepartmentTone = (index) => ['tone-a', 'tone-b', 'tone-c'][index % 3];
 
 function Home() {
   const [overview, setOverview] = useState(() => mergeOverviewWithFallback());
@@ -171,6 +153,8 @@ function Home() {
     () => overview.departments.slice(0, 6),
     [overview.departments]
   );
+  const featuredDepartment = departmentCards[0];
+  const secondaryDepartments = departmentCards.slice(1);
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
@@ -185,23 +169,18 @@ function Home() {
     <>
       <section className="home-landing">
         <div className="container">
+          {error ? (
+            <div className="home-status-badge landing-status-badge" role="status" aria-live="polite">
+              {error}
+            </div>
+          ) : null}
           <div className="landing-hero-panel">
-            {error ? (
-              <div className="home-status-badge landing-status-badge" role="status" aria-live="polite">
-                {error}
-              </div>
-            ) : null}
-
             <div className="landing-hero">
-              <div className="landing-hero-arrow left" aria-hidden="true">
-                <ArrowIcon direction="left" />
-              </div>
-
               <div className="landing-hero-copy">
+                <span className="landing-eyebrow">HealthNexus</span>
                 <h1>Schedule Your Appointment Online</h1>
                 <p>
-                  Your Health is Our Priority. Find top doctors and services near
-                  you.
+                  Your Health is Our Priority. Find top doctors and services near you.
                 </p>
 
                 <form className="landing-search-form" onSubmit={handleSearchSubmit}>
@@ -227,10 +206,6 @@ function Home() {
                   </button>
                 </form>
               </div>
-
-              <div className="landing-hero-arrow right" aria-hidden="true">
-                <ArrowIcon direction="right" />
-              </div>
             </div>
 
             <div className="landing-shortcut-grid">
@@ -253,8 +228,7 @@ function Home() {
             <div>
               <h2 className="landing-section-title">Specialities &amp; Procedures</h2>
               <p>
-                Browse the core departments patients use most often when booking
-                care online.
+                Browse the core departments patients use most often when booking care online.
               </p>
             </div>
             <Link to="/departments" className="landing-section-link">
@@ -262,26 +236,40 @@ function Home() {
             </Link>
           </div>
 
-          <div className="landing-specialty-grid">
-            {departmentCards.map((department, index) => (
-              <article className="landing-specialty-card" key={department.id || department._id}>
-                <div className={`landing-specialty-media ${getDepartmentTone(index)}`}>
-                  <span className="landing-specialty-badge">{department.icon || 'HN'}</span>
-                  <span className="landing-specialty-index">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
+          <div className="landing-specialties-layout">
+            {featuredDepartment ? (
+              <article className="landing-feature-panel">
+                <div className="landing-feature-visual" aria-hidden="true">
+                  <div className="landing-feature-orb" />
+                  <div className="landing-feature-card">
+                    <span>{featuredDepartment.icon || 'HN'}</span>
+                    <strong>{featuredDepartment.name}</strong>
+                  </div>
                 </div>
 
-                <div className="landing-specialty-body">
-                  <span className="landing-specialty-eyebrow">Department</span>
-                  <h3>{department.name}</h3>
-                  <p>{department.shortDescription}</p>
-                  <Link to="/departments" className="text-link">
-                    Explore procedures ->
+                <div className="landing-feature-copy">
+                  <span className="landing-feature-kicker">Popular specialty</span>
+                  <h3>{featuredDepartment.name}</h3>
+                  <p>{featuredDepartment.shortDescription}</p>
+                  <Link to="/departments" className="btn btn-primary btn-small landing-feature-action">
+                    Explore Services
                   </Link>
                 </div>
               </article>
-            ))}
+            ) : null}
+
+            <div className="landing-specialty-list">
+              {secondaryDepartments.map((department) => (
+                <article className="landing-specialty-card" key={department.id || department._id}>
+                  <div className="landing-specialty-icon">{department.icon || 'HN'}</div>
+                  <div className="landing-specialty-body">
+                    <span className="landing-specialty-eyebrow">Department</span>
+                    <h3>{department.name}</h3>
+                    <p>{department.shortDescription}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>

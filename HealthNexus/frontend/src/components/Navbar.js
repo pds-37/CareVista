@@ -61,13 +61,6 @@ function Navbar() {
         </Link>
 
         <nav className="navbar-links" aria-label="Primary navigation">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}
-          >
-            Home
-          </NavLink>
           {navItems.map((item) => (
             <NavLink
               key={item.to}
