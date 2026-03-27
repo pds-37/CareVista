@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 const quickLinks = [
   { label: 'Home', to: '/' },
-  { label: 'Departments', to: '/departments' },
-  { label: 'Doctors', to: '/doctors' },
+  { label: 'Services', to: '/departments' },
+  { label: 'Find Doctors', to: '/doctors' },
   { label: 'Book Appointment', to: '/appointments' },
   { label: 'Contact', to: '/contact' },
   { label: 'About', to: '/about' },
@@ -15,23 +15,15 @@ function Footer() {
       <div className="container site-footer-main">
         <div className="site-footer-column">
           <div className="site-footer-brand">
-            <span className="navbar-brand-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="presentation">
-                <path
-                  d="M9.75 3.5h4.5v5.75H20v4.5h-5.75v5.75h-4.5v-5.75H4v-4.5h5.75V3.5Z"
-                  fill="currentColor"
-                />
-              </svg>
-            </span>
-            <span className="navbar-brand-text">CareVista</span>
+            <span className="navbar-brand-text">HEALTHNEXUS</span>
           </div>
           <p>
-            Advanced medicine delivered with warmth, clarity, and respect for
-            every patient journey.
+            Smarter appointment booking, clearer patient routing, and accessible
+            digital care support for every visit.
           </p>
           <p className="site-footer-copy">
-            CareVista serves families with integrated specialty care, diagnostics,
-            and urgent support.
+            HealthNexus connects patients, specialists, and care teams through a
+            cleaner online care experience.
           </p>
         </div>
 
@@ -49,16 +41,16 @@ function Footer() {
         <div className="site-footer-column">
           <h3>Contact</h3>
           <ul className="site-footer-contact">
-            <li>42 Wellness Ave, Meditown</li>
-            <li>+1 (800) 273-8255</li>
-            <li>hello@carevista.health</li>
+            <li>42 Wellness Avenue, Meditown</li>
+            <li>+91-987-654-3210</li>
+            <li>support@healthnexus.health</li>
             <li>Open daily, 24/7 emergency coverage</li>
           </ul>
         </div>
       </div>
       <div className="site-footer-bottom">
         <div className="container">
-          <p>Copyright 2024 CareVista Medical Center. All rights reserved.</p>
+          <p>Copyright 2026 HealthNexus. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -3,10 +3,9 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 
 const navItems = [
-  { label: 'Home', to: '/' },
-  { label: 'Departments', to: '/departments' },
-  { label: 'Doctors', to: '/doctors' },
-  { label: 'About', to: '/about' },
+  { label: 'Find Doctors', to: '/doctors' },
+  { label: 'Services', to: '/departments' },
+  { label: 'Health Tools', to: '/about' },
 ];
 
 function Navbar() {
@@ -14,12 +13,13 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { isAuthenticated, logout, user } = useAuth();
-  const portalLabel =
+  const dashboardLink =
     user?.role === 'admin'
-      ? 'Admin Panel'
+      ? '/care-desk'
       : user?.role === 'doctor'
-        ? 'Doctor Dashboard'
-        : 'My Portal';
+        ? '/portal/doctor'
+        : '/portal/patient';
+  const welcomeName = user?.name?.split(' ')[0] || 'Guest';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,25 +48,30 @@ function Navbar() {
 
   return (
     <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+      <div className="navbar-topbar">
+        <div className="container navbar-topbar-inner">
+          <span>Your Trusted Partner in Health. Check-ups, Treatment, and Care.</span>
+          <span>Call Us: +91-987-654-3210</span>
+        </div>
+      </div>
+
       <div className="container navbar-inner">
-        <Link to="/" className="navbar-brand" aria-label="CareVista home">
-          <span className="navbar-brand-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" role="presentation">
-              <path
-                d="M9.75 3.5h4.5v5.75H20v4.5h-5.75v5.75h-4.5v-5.75H4v-4.5h5.75V3.5Z"
-                fill="currentColor"
-              />
-            </svg>
-          </span>
-          <span className="navbar-brand-text">CareVista</span>
+        <Link to="/" className="navbar-brand" aria-label="HealthNexus home">
+          <span className="navbar-brand-text">HEALTHNEXUS</span>
         </Link>
 
         <nav className="navbar-links" aria-label="Primary navigation">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}
+          >
+            Home
+          </NavLink>
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
               className={({ isActive }) =>
                 `navbar-link ${isActive ? 'active' : ''}`
               }
@@ -77,25 +82,27 @@ function Navbar() {
         </nav>
 
         <div className="navbar-actions">
-          <Link to="/appointments" className="btn btn-primary navbar-cta">
-            Book Appointment
-          </Link>
           {isAuthenticated ? (
-            <>
-              <Link to="/portal" className="btn btn-secondary navbar-cta">
-                {portalLabel}
+            <div className="navbar-session">
+              <span className="navbar-welcome">Welcome, {welcomeName}!</span>
+              <Link to={dashboardLink} className="btn btn-secondary btn-small navbar-cta">
+                Dashboard
               </Link>
-              <button type="button" className="navbar-link navbar-auth-link" onClick={logout}>
-                Sign Out
+              <button
+                type="button"
+                className="btn btn-ghost btn-small navbar-auth-button"
+                onClick={logout}
+              >
+                Logout
               </button>
-            </>
+            </div>
           ) : (
             <>
               <Link to="/login" className="navbar-link navbar-auth-link">
-                Sign In
+                Login
               </Link>
-              <Link to="/register" className="btn btn-secondary navbar-cta">
-                Join CareVista
+              <Link to="/register" className="btn btn-secondary btn-small navbar-cta">
+                Register
               </Link>
             </>
           )}
@@ -115,11 +122,17 @@ function Navbar() {
 
       <div className={`navbar-mobile ${menuOpen ? 'open' : ''}`}>
         <div className="container navbar-mobile-menu">
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) => `navbar-mobile-link ${isActive ? 'active' : ''}`}
+          >
+            Home
+          </NavLink>
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
-              end={item.to === '/'}
               className={({ isActive }) =>
                 `navbar-mobile-link ${isActive ? 'active' : ''}`
               }
@@ -127,29 +140,29 @@ function Navbar() {
               {item.label}
             </NavLink>
           ))}
-          <Link to="/appointments" className="btn btn-primary navbar-mobile-cta">
+          <Link to="/appointments" className="btn btn-primary btn-small navbar-mobile-cta">
             Book Appointment
           </Link>
           {isAuthenticated ? (
             <>
-              <Link to="/portal" className="btn btn-secondary navbar-mobile-cta">
-                {portalLabel}
+              <Link to={dashboardLink} className="btn btn-secondary btn-small navbar-mobile-cta">
+                Dashboard
               </Link>
               <button
                 type="button"
-                className="navbar-mobile-link"
+                className="btn btn-ghost btn-small navbar-mobile-cta"
                 onClick={logout}
               >
-                Sign Out
+                Logout
               </button>
             </>
           ) : (
             <>
               <Link to="/login" className="navbar-mobile-link">
-                Sign In
+                Login
               </Link>
-              <Link to="/register" className="btn btn-secondary navbar-mobile-cta">
-                Join CareVista
+              <Link to="/register" className="btn btn-secondary btn-small navbar-mobile-cta">
+                Register
               </Link>
             </>
           )}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import api from '../api';
 import { fallbackDepartments, fallbackDoctors } from '../content/careFallback';
 
@@ -12,6 +12,7 @@ const getInitials = (name) =>
     .toUpperCase();
 
 function FindDoctors() {
+  const [searchParams] = useSearchParams();
   const [departments, setDepartments] = useState(fallbackDepartments);
   const [doctors, setDoctors] = useState(fallbackDoctors);
   const [error, setError] = useState('');
@@ -60,6 +61,18 @@ function FindDoctors() {
       mounted = false;
     };
   }, []);
+
+  useEffect(() => {
+    const nextDepartment = searchParams.get('department') || '';
+    const nextSearchQuery = searchParams.get('search') || '';
+
+    setSelectedDepartment((current) =>
+      current === nextDepartment ? current : nextDepartment
+    );
+    setSearchQuery((current) =>
+      current === nextSearchQuery ? current : nextSearchQuery
+    );
+  }, [searchParams]);
 
   const filteredDoctors = useMemo(() => {
     const normalizedSearch = searchQuery.trim().toLowerCase();
