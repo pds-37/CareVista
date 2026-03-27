@@ -93,7 +93,7 @@ const startServer = async () => {
     const port = process.env.PORT || 5000;
 
     app.listen(port, () => {
-      console.log(`CareVista backend running on port ${port}`);
+      console.log(`HealthNexus backend running on port ${port}`);
     });
   } catch (error) {
     console.error('Server startup failed:', error.message);

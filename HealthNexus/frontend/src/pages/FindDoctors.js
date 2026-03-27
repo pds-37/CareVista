@@ -49,7 +49,7 @@ function FindDoctors() {
         if (mounted) {
           setError(
             err.response?.data?.error ||
-              'Live physician data is temporarily unavailable. Showing the CareVista directory.'
+              'Live physician data is temporarily unavailable. Showing the HealthNexus directory.'
           );
         }
       }

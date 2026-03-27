@@ -111,7 +111,7 @@ const buildDoctorEmail = (doctorName) =>
   `${doctorName
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '.')
-    .replace(/^\.|\.$/g, '')}@carevista.health`;
+    .replace(/^\.|\.$/g, '')}@healthnexus.health`;
 
 const ensureRoleUsers = async (doctorRecords, appointmentRecords) => {
   const summary = {
@@ -121,12 +121,14 @@ const ensureRoleUsers = async (doctorRecords, appointmentRecords) => {
     linkedAppointments: 0,
   };
 
-  let adminUser = await User.findOne({ email: 'admin@carevista.health' });
+  let adminUser = await User.findOne({
+    email: { $in: ['admin@healthnexus.health', 'admin@carevista.health'] },
+  });
 
   if (!adminUser) {
     adminUser = await User.create({
-      name: 'CareVista Admin',
-      email: 'admin@carevista.health',
+      name: 'HealthNexus Admin',
+      email: 'admin@healthnexus.health',
       passwordHash: hashPassword('Admin123!'),
       role: 'admin',
       phone: '+1 (800) 273-8255',

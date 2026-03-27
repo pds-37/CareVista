@@ -15,7 +15,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error) {
-    console.error('CareVista render error:', error);
+    console.error('HealthNexus render error:', error);
   }
 
   render() {
@@ -28,7 +28,7 @@ class ErrorBoundary extends React.Component {
             </span>
             <h1>Something went wrong</h1>
             <p>
-              CareVista ran into a rendering issue. Refresh the page and try
+              HealthNexus ran into a rendering issue. Refresh the page and try
               again.
             </p>
           </div>

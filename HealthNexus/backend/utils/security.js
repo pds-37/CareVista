@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const TOKEN_SECRET =
-  process.env.JWT_SECRET || 'carevista-dev-secret-change-in-production';
+  process.env.JWT_SECRET || 'healthnexus-dev-secret-change-in-production';
 const TOKEN_LIFETIME_SECONDS = Number(
   process.env.JWT_EXPIRES_IN_SECONDS || 60 * 60 * 24 * 7
 );

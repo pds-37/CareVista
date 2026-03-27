@@ -58,11 +58,11 @@ const buildDoctorEmailBase = (doctorName = '') =>
 const generateUniqueDoctorEmail = async (doctorName) => {
   const base = buildDoctorEmailBase(doctorName);
   let suffix = '';
-  let email = `${base}@carevista.health`;
+  let email = `${base}@healthnexus.health`;
 
   while (await User.exists({ email })) {
     suffix = suffix ? `${Number(suffix) + 1}` : '2';
-    email = `${base}.${suffix}@carevista.health`;
+    email = `${base}.${suffix}@healthnexus.health`;
   }
 
   return email;

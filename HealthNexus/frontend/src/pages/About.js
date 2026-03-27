@@ -4,9 +4,9 @@ function About() {
       <section className="page-hero">
         <div className="container">
           <span className="eyebrow eyebrow-light">Who We Are</span>
-          <h1>About CareVista</h1>
+          <h1>About HealthNexus</h1>
           <p>
-            CareVista combines modern medicine with a patient-first culture built
+            HealthNexus combines modern medicine with a patient-first culture built
             around dignity, transparency, and clinical excellence.
           </p>
         </div>
@@ -18,7 +18,7 @@ function About() {
             <span className="eyebrow">Our Mission</span>
             <h2>Exceptional healthcare should feel coordinated, human, and safe.</h2>
             <p>
-              CareVista was founded to close the gap between advanced treatment
+              HealthNexus was founded to close the gap between advanced treatment
               and compassionate service. We believe patients deserve a care team
               that explains options clearly, responds promptly, and treats every
               concern with seriousness.
@@ -32,7 +32,7 @@ function About() {
 
           <div className="card mission-image-card">
             <div className="mission-image-placeholder" aria-hidden="true">
-              <span>CareVista</span>
+              <span>HealthNexus</span>
               <strong>Integrated Care Campus</strong>
             </div>
           </div>
@@ -44,13 +44,13 @@ function About() {
           <div className="section-heading">
             <h2 className="section-title">Our Values</h2>
             <p>
-              These principles shape how CareVista makes clinical decisions and
+              These principles shape how HealthNexus makes clinical decisions and
               serves patients across every department.
             </p>
           </div>
           <div className="grid-4">
             <article className="card value-card">
-              <span aria-hidden="true">💙</span>
+              <span aria-hidden="true">CP</span>
               <h3>Compassion</h3>
               <p>
                 We listen closely and treat each patient with empathy, patience,
@@ -59,7 +59,7 @@ function About() {
               </p>
             </article>
             <article className="card value-card">
-              <span aria-hidden="true">🏥</span>
+              <span aria-hidden="true">EX</span>
               <h3>Excellence</h3>
               <p>
                 We pursue strong outcomes through evidence-based medicine,
@@ -68,7 +68,7 @@ function About() {
               </p>
             </article>
             <article className="card value-card">
-              <span aria-hidden="true">🧪</span>
+              <span aria-hidden="true">IN</span>
               <h3>Innovation</h3>
               <p>
                 We adopt technology and new workflows only when they improve
@@ -77,7 +77,7 @@ function About() {
               </p>
             </article>
             <article className="card value-card">
-              <span aria-hidden="true">🛡️</span>
+              <span aria-hidden="true">TR</span>
               <h3>Integrity</h3>
               <p>
                 We communicate honestly about diagnoses, timelines, and next
@@ -93,7 +93,7 @@ function About() {
           <div className="section-heading">
             <h2 className="section-title">Our Story</h2>
             <p>
-              CareVista has grown deliberately, expanding services while keeping
+              HealthNexus has grown deliberately, expanding services while keeping
               the patient experience personal and navigable.
             </p>
           </div>
@@ -102,7 +102,7 @@ function About() {
               <div className="timeline-dot" />
               <div className="card timeline-card">
                 <span>1998</span>
-                <h3>CareVista is founded</h3>
+                <h3>HealthNexus is founded</h3>
                 <p>
                   A small regional hospital opens with a mission to provide
                   accessible, community-rooted specialty care.
@@ -137,7 +137,7 @@ function About() {
                 <span>2020</span>
                 <h3>Digital transformation</h3>
                 <p>
-                  CareVista modernizes patient communications, triage workflows,
+                  HealthNexus modernizes patient communications, triage workflows,
                   and care coordination to improve speed and continuity.
                 </p>
               </div>
@@ -153,13 +153,13 @@ function About() {
               <span className="eyebrow">Careers</span>
               <h2>Join Our Team</h2>
               <p>
-                CareVista is always looking for clinicians, coordinators, and
+                HealthNexus is always looking for clinicians, coordinators, and
                 support staff who take patient care seriously and work well in
                 multidisciplinary teams.
               </p>
             </div>
-            <a className="btn btn-primary" href="mailto:careers@carevista.health">
-              careers@carevista.health
+            <a className="btn btn-primary" href="mailto:careers@healthnexus.health">
+              careers@healthnexus.health
             </a>
           </div>
         </div>

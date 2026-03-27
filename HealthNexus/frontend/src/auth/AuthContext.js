@@ -1,12 +1,15 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import api from '../api';
 
-const AUTH_STORAGE_KEY = 'carevista-auth';
+const AUTH_STORAGE_KEY = 'healthnexus-auth';
+const LEGACY_AUTH_STORAGE_KEY = 'carevista-auth';
 const AuthContext = createContext(null);
 
 const readStoredSession = () => {
   try {
-    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    const raw =
+      localStorage.getItem(AUTH_STORAGE_KEY) ||
+      localStorage.getItem(LEGACY_AUTH_STORAGE_KEY);
 
     if (!raw) {
       return { token: '', user: null };
@@ -84,6 +87,7 @@ export function AuthProvider({ children }) {
   const persistSession = (nextSession) => {
     setSession(nextSession);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextSession));
+    localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
     applyToken(nextSession.token);
   };
 
@@ -102,6 +106,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setSession({ token: '', user: null });
     localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
     applyToken('');
   };
 

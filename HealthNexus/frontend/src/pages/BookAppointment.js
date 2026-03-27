@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../auth/AuthContext';
+import { getPortalPathForRole } from '../auth/roleConfig';
 import { fallbackDepartments, fallbackDoctors } from '../content/careFallback';
 
 const initialFormState = {
@@ -197,7 +198,7 @@ function BookAppointment() {
             </div>
             <h1>Appointment Requested!</h1>
             <p>
-              Your request has been sent to the CareVista scheduling team. You
+              Your request has been sent to the HealthNexus scheduling team. You
               can monitor the status from your patient portal.
             </p>
             <div className="success-summary">
@@ -240,11 +241,11 @@ function BookAppointment() {
         <section className="page-hero">
           <div className="container">
             <span className="eyebrow eyebrow-light">Appointment Center</span>
-            <h1>Book an Appointment</h1>
-            <p>
-              Patient booking is now tied to a secure CareVista account so you
+          <h1>Book an Appointment</h1>
+          <p>
+              Patient booking is now tied to a secure HealthNexus account so you
               can track requests and appointment history afterward.
-            </p>
+          </p>
           </div>
         </section>
 
@@ -254,17 +255,28 @@ function BookAppointment() {
               <span className="empty-state-icon" aria-hidden="true">
                 AC
               </span>
-              <h2>Sign in as a patient to continue.</h2>
+              <h2>
+                {isAuthenticated
+                  ? 'This booking flow is reserved for patient accounts.'
+                  : 'Sign in as a patient to continue.'}
+              </h2>
               <p>
-                Your patient account stores appointment history, request status,
-                and future booking details securely.
+                {isAuthenticated
+                  ? `You are currently signed in as a ${user?.role}. Switch to a patient account to book and track appointments from the patient portal.`
+                  : 'Your patient account stores appointment history, request status, and future booking details securely.'}
               </p>
               <div className="hero-actions">
-                <Link to="/login" className="btn btn-primary">
-                  Sign In
-                </Link>
+                {isAuthenticated ? (
+                  <Link to={getPortalPathForRole(user?.role)} className="btn btn-primary">
+                    Open My Dashboard
+                  </Link>
+                ) : (
+                  <Link to="/login" className="btn btn-primary">
+                    Sign In
+                  </Link>
+                )}
                 <Link to="/register" className="btn btn-secondary">
-                  Create Account
+                  Create Patient Account
                 </Link>
               </div>
             </div>
@@ -293,7 +305,7 @@ function BookAppointment() {
             <div className="card appointment-form-card">
               <h2>Request Your Visit</h2>
               <p className="form-intro">
-                Your CareVista account is linked to this booking automatically.
+                Your HealthNexus account is linked to this booking automatically.
               </p>
 
               <form onSubmit={handleSubmit} noValidate>

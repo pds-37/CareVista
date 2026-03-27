@@ -89,7 +89,7 @@ function Contact() {
       <section className="page-hero">
         <div className="container">
           <span className="eyebrow eyebrow-light">Care Team Support</span>
-          <h1>Contact CareVista</h1>
+          <h1>Contact HealthNexus</h1>
           <p>
             Reach out for scheduling questions, records guidance, referrals, or
             general patient support.
@@ -112,7 +112,7 @@ function Contact() {
               </div>
               <div>
                 <span>Email</span>
-                <strong>hello@carevista.health</strong>
+                <strong>hello@healthnexus.health</strong>
               </div>
               <div>
                 <span>Hours</span>

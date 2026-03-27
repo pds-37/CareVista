@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { getPortalPathForRole } from '../auth/roleConfig';
 
 function PortalHome() {
   const { user } = useAuth();
@@ -8,15 +9,7 @@ function PortalHome() {
     return <Navigate replace to="/login" />;
   }
 
-  if (user.role === 'admin') {
-    return <Navigate replace to="/portal/admin" />;
-  }
-
-  if (user.role === 'doctor') {
-    return <Navigate replace to="/portal/doctor" />;
-  }
-
-  return <Navigate replace to="/portal/patient" />;
+  return <Navigate replace to={getPortalPathForRole(user.role)} />;
 }
 
 export default PortalHome;

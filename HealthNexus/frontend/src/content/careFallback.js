@@ -1,10 +1,10 @@
-export const fallbackDepartments = [
+﻿export const fallbackDepartments = [
   {
     _id: 'fallback-dept-cardiology',
     name: 'Cardiology',
     icon: 'CV',
     description:
-      'CareVista Cardiology provides preventive heart screenings, advanced diagnostics, interventional support, and long-term cardiac rehabilitation plans for adults of all ages.',
+      'HealthNexus Cardiology provides preventive heart screenings, advanced diagnostics, interventional support, and long-term cardiac rehabilitation plans for adults of all ages.',
     shortDescription:
       'Comprehensive heart and vascular care with preventive and acute services.',
     services: [
@@ -38,7 +38,7 @@ export const fallbackDepartments = [
     name: 'Orthopedics',
     icon: 'OR',
     description:
-      'Orthopedics at CareVista supports joint preservation, fracture recovery, sports injuries, and mobility restoration with a strong focus on rehabilitation and long-term strength.',
+      'Orthopedics at HealthNexus supports joint preservation, fracture recovery, sports injuries, and mobility restoration with a strong focus on rehabilitation and long-term strength.',
     shortDescription:
       'Bone, joint, and mobility care for injuries and chronic pain.',
     services: [
@@ -72,7 +72,7 @@ export const fallbackDepartments = [
     name: 'Oncology',
     icon: 'ON',
     description:
-      'CareVista Oncology coordinates diagnosis, treatment planning, infusion services, survivorship support, and compassionate navigation for patients and caregivers through each phase of care.',
+      'HealthNexus Oncology coordinates diagnosis, treatment planning, infusion services, survivorship support, and compassionate navigation for patients and caregivers through each phase of care.',
     shortDescription:
       'Integrated cancer diagnosis, treatment planning, and support services.',
     services: [
@@ -183,3 +183,4 @@ export const fallbackDoctors = [
     reviewCount: 145,
   },
 ];
+

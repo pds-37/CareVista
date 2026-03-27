@@ -77,6 +77,7 @@ function Navbar() {
         <div className="navbar-actions">
           {isAuthenticated ? (
             <div className="navbar-session">
+              <span className="navbar-role-badge">{user?.role || 'member'}</span>
               <span className="navbar-welcome">Welcome, {welcomeName}!</span>
               <Link to={dashboardLink} className="btn btn-secondary btn-small navbar-cta">
                 Dashboard
@@ -92,10 +93,10 @@ function Navbar() {
           ) : (
             <>
               <Link to="/login" className="navbar-link navbar-auth-link">
-                Login
+                Sign In
               </Link>
               <Link to="/register" className="btn btn-secondary btn-small navbar-cta">
-                Register
+                Create Account
               </Link>
             </>
           )}
@@ -152,10 +153,10 @@ function Navbar() {
           ) : (
             <>
               <Link to="/login" className="navbar-mobile-link">
-                Login
+                Sign In
               </Link>
               <Link to="/register" className="btn btn-secondary btn-small navbar-mobile-cta">
-                Register
+                Create Account
               </Link>
             </>
           )}

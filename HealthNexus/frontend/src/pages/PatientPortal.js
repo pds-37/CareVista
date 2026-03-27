@@ -89,7 +89,7 @@ function PatientPortal() {
           <span className="eyebrow eyebrow-light">Patient Dashboard</span>
           <h1>Welcome back, {user?.name?.split(' ')[0] || 'Patient'}</h1>
           <p>
-            Track appointment requests, review outcomes, and keep your CareVista
+            Track appointment requests, review outcomes, and keep your HealthNexus
             history organized in one place.
           </p>
         </div>
@@ -121,7 +121,7 @@ function PatientPortal() {
                   {overview.appointments.length === 0 ? (
                     <div className="empty-state">
                       <h2>No appointments yet</h2>
-                      <p>Your future CareVista visits will appear here.</p>
+                      <p>Your future HealthNexus visits will appear here.</p>
                     </div>
                   ) : (
                     <div className="table-scroll">

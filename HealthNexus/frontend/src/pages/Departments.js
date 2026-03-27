@@ -22,7 +22,7 @@ function Departments() {
         if (mounted) {
           setError(
             err.response?.data?.error ||
-              'Live department details are temporarily unavailable. Showing CareVista specialties.'
+              'Live department details are temporarily unavailable. Showing HealthNexus specialties.'
           );
         }
       }
@@ -42,7 +42,7 @@ function Departments() {
           <span className="eyebrow eyebrow-light">Specialized Clinical Services</span>
           <h1>Our Departments</h1>
           <p>
-            Explore the specialties that anchor CareVista&apos;s coordinated model
+            Explore the specialties that anchor HealthNexus&apos;s coordinated model
             of care, from first evaluation through treatment and recovery.
           </p>
         </div>

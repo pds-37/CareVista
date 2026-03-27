@@ -1,9 +1,9 @@
-const departments = [
+﻿const departments = [
   {
     name: 'Cardiology',
-    icon: '🫀',
+    icon: 'CV',
     description:
-      'CareVista Cardiology provides preventive heart screenings, advanced diagnostics, interventional support, and long-term cardiac rehabilitation plans for adults of all ages.',
+      'HealthNexus Cardiology provides preventive heart screenings, advanced diagnostics, interventional support, and long-term cardiac rehabilitation plans for adults of all ages.',
     shortDescription: 'Comprehensive heart and vascular care with preventive and acute services.',
     services: ['Heart health screenings', 'Electrocardiograms', 'Echocardiography', 'Hypertension management'],
     headDoctor: 'Dr. Sarah Mitchell',
@@ -11,7 +11,7 @@ const departments = [
   },
   {
     name: 'Neurology',
-    icon: '🧠',
+    icon: 'NR',
     description:
       'Our Neurology department evaluates headaches, seizures, stroke risk, memory concerns, and complex nerve disorders through coordinated diagnostic and follow-up care.',
     shortDescription: 'Specialist care for the brain, spine, nerves, and stroke recovery.',
@@ -21,9 +21,9 @@ const departments = [
   },
   {
     name: 'Orthopedics',
-    icon: '🦴',
+    icon: 'OR',
     description:
-      'Orthopedics at CareVista supports joint preservation, fracture recovery, sports injuries, and mobility restoration with a strong focus on rehabilitation and long-term strength.',
+      'Orthopedics at HealthNexus supports joint preservation, fracture recovery, sports injuries, and mobility restoration with a strong focus on rehabilitation and long-term strength.',
     shortDescription: 'Bone, joint, and mobility care for injuries and chronic pain.',
     services: ['Fracture care', 'Joint pain treatment', 'Sports injury recovery', 'Rehabilitation planning'],
     headDoctor: 'Dr. Priya Sharma',
@@ -31,7 +31,7 @@ const departments = [
   },
   {
     name: 'Pediatrics',
-    icon: '👶',
+    icon: 'PD',
     description:
       'The Pediatrics team delivers family-centered care for newborns, children, and adolescents, including routine wellness checks, developmental reviews, and acute illness evaluation.',
     shortDescription: 'Compassionate pediatric care from infancy through adolescence.',
@@ -41,9 +41,9 @@ const departments = [
   },
   {
     name: 'Oncology',
-    icon: '🎗️',
+    icon: 'ON',
     description:
-      'CareVista Oncology coordinates diagnosis, treatment planning, infusion services, survivorship support, and compassionate navigation for patients and caregivers through each phase of care.',
+      'HealthNexus Oncology coordinates diagnosis, treatment planning, infusion services, survivorship support, and compassionate navigation for patients and caregivers through each phase of care.',
     shortDescription: 'Integrated cancer diagnosis, treatment planning, and support services.',
     services: ['Cancer screening reviews', 'Treatment planning', 'Infusion coordination', 'Supportive care'],
     headDoctor: 'Dr. Emily Chen',
@@ -51,7 +51,7 @@ const departments = [
   },
   {
     name: 'Emergency Medicine',
-    icon: '🚨',
+    icon: 'ER',
     description:
       'Emergency Medicine operates around the clock with rapid triage, stabilization, trauma evaluation, and coordination with specialty teams for urgent and life-threatening conditions.',
     shortDescription: '24/7 emergency evaluation, stabilization, and urgent care routing.',
@@ -146,3 +146,4 @@ module.exports = {
   departments,
   doctors,
 };
+

@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { getPortalPathForRole } from '../auth/roleConfig';
 
 function ProtectedRoute({ roles = [], children }) {
   const { isAuthenticated, loading, user } = useAuth();
@@ -18,7 +19,7 @@ function ProtectedRoute({ roles = [], children }) {
   }
 
   if (roles.length > 0 && !roles.includes(user.role)) {
-    return <Navigate replace to="/portal" />;
+    return <Navigate replace to={getPortalPathForRole(user.role)} />;
   }
 
   return children;

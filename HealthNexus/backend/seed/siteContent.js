@@ -1,8 +1,8 @@
-module.exports = {
+﻿module.exports = {
   hero: {
     headline: 'World-Class Care, Closer to Home',
     subheadline:
-      'CareVista brings together expert physicians, advanced diagnostics, and compassionate nursing under one roof — so every patient feels seen, heard, and healed.',
+      'HealthNexus brings together expert physicians, advanced diagnostics, and compassionate nursing under one roof â€” so every patient feels seen, heard, and healed.',
     ctaText: 'Book an Appointment',
     ctaLink: '/appointments',
   },
@@ -23,7 +23,7 @@ module.exports = {
       name: 'Michael Torres',
       role: 'Caregiver',
       quote:
-        'CareVista helped our family navigate oncology appointments with real clarity. We always knew who to call, what came next, and how to prepare.',
+        'HealthNexus helped our family navigate oncology appointments with real clarity. We always knew who to call, what came next, and how to prepare.',
     },
     {
       name: 'Nina Patel',
@@ -40,7 +40,7 @@ module.exports = {
   ],
   faq: [
     {
-      question: 'How do I request an appointment at CareVista?',
+      question: 'How do I request an appointment at HealthNexus?',
       answer:
         'You can submit an appointment request online through the Book Appointment page. Our care team reviews requests promptly and contacts you to confirm the best available slot.',
     },
@@ -73,6 +73,7 @@ module.exports = {
   aboutSnippet: {
     title: 'Our Mission',
     body:
-      'CareVista was founded on the belief that exceptional healthcare is a right, not a privilege. We combine clinical excellence, operational clarity, and genuine compassion so patients and families can move through care with confidence.',
+      'HealthNexus was founded on the belief that exceptional healthcare is a right, not a privilege. We combine clinical excellence, operational clarity, and genuine compassion so patients and families can move through care with confidence.',
   },
 };
+
